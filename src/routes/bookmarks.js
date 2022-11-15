@@ -2,7 +2,7 @@ import express from "express";
 import BookmarkDAO from "../data/BookmarkDAO.js";
 
 const router = express.Router();
-const bookmarkDao = new BookmarkDAO();
+export const bookmarkDao = new BookmarkDAO();
 
 router.get("/bookmarks", (req, res) => {
   const bookmarks = bookmarkDao.readAll();

@@ -44,6 +44,10 @@ class BookmarkDAO {
     this.bookmarks.splice(index, 1);
     return bookmark;
   }
+
+  deleteAll() {
+    this.bookmarks = [];
+  }
 }
 
 export default BookmarkDAO;
