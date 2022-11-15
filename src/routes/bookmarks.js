@@ -9,7 +9,17 @@ router.get("/bookmarks", (req, res) => {
   res.json({
     status: 200,
     message: `Successfully retrieved ${bookmarks.length} bookmarks!`,
-    data: bookmarks
+    data: bookmarks,
+  });
+});
+
+router.post("/bookmarks", (req, res) => {
+  const { title, url } = req.body;
+  const bookmark = bookmarkDao.create({ title, url });
+  res.status(201).json({
+    status: 201,
+    message: `Successfully created the following bookmark!`,
+    data: bookmark,
   });
 });
 
