@@ -25,7 +25,18 @@ describe("Test API /bookmarks endpoints", () => {
     expect(response.body.data.length).toBe(numBookmarks);
   });
 
-  it("POST a bookmark", async () => {});
+  it("POST a bookmark", async () => {
+    const title = faker.lorem.sentence();
+    const url = faker.internet.url();
+    const response = await request.post("/bookmarks").send({
+      title,
+      url,
+    });
+    expect(response.status).toBe(201);
+    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data.title).toBe(title);
+    expect(response.body.data.url).toBe(url);
+  });
 
   it("GET a bookmark given its ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
