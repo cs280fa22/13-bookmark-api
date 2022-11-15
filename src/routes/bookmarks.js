@@ -33,4 +33,14 @@ router.post("/bookmarks", (req, res) => {
   });
 });
 
+router.delete("/bookmarks/:id", (req, res) => {
+  const { id } = req.params;
+  const bookmark = bookmarkDao.delete(id);
+  res.json({
+    status: 200,
+    message: `Successfully deleted the following bookmark!`,
+    data: bookmark,
+  });
+});
+
 export default router;
