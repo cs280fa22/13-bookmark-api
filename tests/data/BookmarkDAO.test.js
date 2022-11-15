@@ -37,23 +37,23 @@ describe("Test BookmarkDAO", () => {
   });
 
   it("test readAll()", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     expect(bookmarkDao.readAll().length).toBe(bookmarks.length);
   });
 
   it("test read() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     const bookmark = bookmarks[0];
     expect(bookmarkDao.read(bookmark.id)).toMatchObject(bookmark);
   });
 
   it("test read() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     expect(bookmarkDao.read("invalid_id")).toBeUndefined();
   });
 
   it("test update() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     const bookmark = bookmarks[0];
     expect(
       bookmarkDao.update({
@@ -69,12 +69,12 @@ describe("Test BookmarkDAO", () => {
   });
 
   it("test update() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     expect(bookmarkDao.update({ id: "invalid_id" })).toBeUndefined();
   });
 
   it("test delete() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     const toDelete = bookmarks[0];
     const bookmark = bookmarkDao.delete(toDelete.id);
     expect(toDelete).toMatchObject(bookmark);
@@ -82,7 +82,7 @@ describe("Test BookmarkDAO", () => {
   });
 
   it("test delete() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks;
+    bookmarkDao.bookmarks = bookmarks.map(b => b);
     const bookmark = bookmarkDao.delete("invalid_id");
     expect(bookmark).toBeUndefined();
     expect(bookmarkDao.bookmarks.length).toBe(numBookmarks);

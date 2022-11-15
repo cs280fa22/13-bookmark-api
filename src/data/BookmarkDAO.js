@@ -36,9 +36,12 @@ class BookmarkDAO {
   // return the deleted bookmark
   delete(id) {
     const index = this.bookmarks.findIndex((bookmark) => bookmark.id === id);
+    if (index === -1) {
+      return undefined;
+    }
+
     const bookmark = this.bookmarks[index];
     this.bookmarks.splice(index, 1);
-
     return bookmark;
   }
 }
