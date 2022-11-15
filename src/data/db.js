@@ -1,13 +1,11 @@
 import mongoose from "mongoose";
 
-const URI = process.env.DB_URI;
-
 const option = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
 
-export function connect() {
+export function connect(URI) {
   mongoose.connect(URI, option);
 
   mongoose.connection.on("error", (err) => {
