@@ -27,7 +27,13 @@ describe("Test API /bookmarks endpoints", () => {
 
   it("POST a bookmark", async () => {});
 
-  it("GET a bookmark given its ID", async () => {});
+  it("GET a bookmark given its ID", async () => {
+    const index = Math.floor(Math.random() * numBookmarks);
+    const bookmark = bookmarkDao.readAll({})[index];
+    const response = await request.get(`/bookmarks/${bookmark.id}`);
+    expect(response.status).toBe(200);
+    expect(response.body.data).toMatchObject(bookmark);
+  });
 
   it("Update a bookmark given its ID", async () => {});
 
