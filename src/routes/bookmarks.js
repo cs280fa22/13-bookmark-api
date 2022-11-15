@@ -4,9 +4,9 @@ import BookmarkDAO from "../data/BookmarkDAO.js";
 const router = express.Router();
 export const bookmarkDao = new BookmarkDAO();
 
-router.get("/bookmarks", (req, res) => {
+router.get("/bookmarks", async (req, res) => {
   const { title, url } = req.query;
-  const bookmarks = bookmarkDao.readAll({ title, url });
+  const bookmarks = await bookmarkDao.readAll({ title, url });
   res.json({
     status: 200,
     message: `Successfully retrieved ${bookmarks.length} bookmarks!`,
@@ -14,9 +14,9 @@ router.get("/bookmarks", (req, res) => {
   });
 });
 
-router.get("/bookmarks/:id", (req, res) => {
+router.get("/bookmarks/:id", async (req, res) => {
   const { id } = req.params;
-  const bookmark = bookmarkDao.read(id);
+  const bookmark = await bookmarkDao.read(id);
   res.json({
     status: 200,
     message: `Successfully retrieved the following bookmark!`,
@@ -24,9 +24,9 @@ router.get("/bookmarks/:id", (req, res) => {
   });
 });
 
-router.post("/bookmarks", (req, res) => {
+router.post("/bookmarks", async (req, res) => {
   const { title, url } = req.body;
-  const bookmark = bookmarkDao.create({ title, url });
+  const bookmark = await bookmarkDao.create({ title, url });
   res.status(201).json({
     status: 201,
     message: `Successfully created the following bookmark!`,
@@ -34,10 +34,10 @@ router.post("/bookmarks", (req, res) => {
   });
 });
 
-router.put("/bookmarks/:id", (req, res) => {
+router.put("/bookmarks/:id", async (req, res) => {
   const { id } = req.params;
   const { title, url } = req.body;
-  const bookmarks = bookmarkDao.update({ id, title, url });
+  const bookmarks = await bookmarkDao.update({ id, title, url });
   res.json({
     status: 200,
     message: `Successfully updated the following bookmark!`,
@@ -45,9 +45,9 @@ router.put("/bookmarks/:id", (req, res) => {
   });
 });
 
-router.delete("/bookmarks/:id", (req, res) => {
+router.delete("/bookmarks/:id", async (req, res) => {
   const { id } = req.params;
-  const bookmark = bookmarkDao.delete(id);
+  const bookmark = await bookmarkDao.delete(id);
   res.json({
     status: 200,
     message: `Successfully deleted the following bookmark!`,
