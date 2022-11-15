@@ -13,6 +13,16 @@ router.get("/bookmarks", (req, res) => {
   });
 });
 
+router.get("/bookmarks/:id", (req, res) => {
+  const { id } = req.params;
+  const bookmark = bookmarkDao.read(id);
+  res.json({
+    status: 200,
+    message: `Successfully retrieved the following bookmark!`,
+    data: bookmark,
+  });
+});
+
 router.post("/bookmarks", (req, res) => {
   const { title, url } = req.body;
   const bookmark = bookmarkDao.create({ title, url });
