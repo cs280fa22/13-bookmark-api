@@ -1,4 +1,4 @@
-import Bookmark from "../model/Bookmark";
+import Bookmark from "../model/Bookmark.js";
 
 class BookmarkDAO {
   constructor() {
