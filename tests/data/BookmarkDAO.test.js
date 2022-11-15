@@ -2,6 +2,10 @@ import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import BookmarkDAO from "../../src/data/BookmarkDAO";
 import { faker } from "@faker-js/faker";
 import Bookmark from "../../src/model/Bookmark";
+import * as db from "../../src/data/db.js";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 describe("Test BookmarkDAO", () => {
   const numBookmarks = 5;
