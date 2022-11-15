@@ -11,7 +11,16 @@ describe("Test API /bookmarks endpoints", () => {
 
   beforeEach(() => {
     bookmarkDao.deleteAll();
-    for (let index = 0; index < numBookmarks; index++) {
+
+    const cutoff = 2;
+    for (let index = 0; index < cutoff; index++) {
+      bookmarkDao.create({
+        title: "Fake title",
+        url: `url-${index}`,
+      });
+    }
+
+    for (let index = cutoff; index < numBookmarks; index++) {
       bookmarkDao.create({
         title: faker.lorem.sentence(),
         url: faker.internet.url(),
@@ -23,6 +32,22 @@ describe("Test API /bookmarks endpoints", () => {
     const response = await request.get("/bookmarks");
     expect(response.status).toBe(200);
     expect(response.body.data.length).toBe(numBookmarks);
+  });
+
+  describe("GET with query parameters", async () => {
+    it("GET all bookmarks given title", async () => {
+      const title = "Fake title";
+      const response = await request.get(`/bookmarks?title=${title}`);
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(2);
+    });
+
+    it("GET all bookmarks given URL", async () => {
+      const url = "url-0";
+      const response = await request.get(`/bookmarks?url=${url}`);
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(1);
+    });
   });
 
   it("POST a bookmark", async () => {
