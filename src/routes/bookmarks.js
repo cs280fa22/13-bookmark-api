@@ -33,6 +33,17 @@ router.post("/bookmarks", (req, res) => {
   });
 });
 
+router.put("/bookmarks/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, url } = req.body;
+  const bookmarks = bookmarkDao.update({ id, title, url });
+  res.json({
+    status: 200,
+    message: `Successfully updated the following bookmark!`,
+    data: bookmarks,
+  });
+});
+
 router.delete("/bookmarks/:id", (req, res) => {
   const { id } = req.params;
   const bookmark = bookmarkDao.delete(id);
