@@ -1,0 +1,46 @@
+import Bookmark from "../model/Bookmark";
+
+class BookmarkDAO {
+  constructor() {
+    this.bookmarks = [];
+  }
+
+  // return the created bookmark
+  create({ title, url }) {
+    const bookmark = new Bookmark(title, url);
+    this.bookmarks.push(bookmark);
+    return bookmark;
+  }
+
+  // return all bookmarks
+  readAll() {
+    return this.bookmarks;
+  }
+
+  // return the bookmark with the given id
+  // return undefined if id does not exist in our database
+  read(id) {
+    return this.bookmarks.find((bookmark) => bookmark.id === id);
+  }
+
+  // return the updated bookmark
+  update({ id, title, url }) {
+    const bookmark = this.read(id);
+    if (bookmark) {
+      title && (bookmark.title = title);
+      url && (bookmark.url = url);
+    }
+    return bookmark;
+  }
+
+  // return the deleted bookmark
+  delete(id) {
+    const index = this.bookmarks.findIndex((bookmark) => bookmark.id === id);
+    const bookmark = this.bookmarks[index];
+    this.bookmarks.splice(index, 1);
+
+    return bookmark;
+  }
+}
+
+export default BookmarkDAO;
