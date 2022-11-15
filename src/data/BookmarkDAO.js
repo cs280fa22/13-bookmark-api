@@ -13,8 +13,18 @@ class BookmarkDAO {
   }
 
   // return all bookmarks
-  readAll() {
-    return this.bookmarks;
+  readAll({ title, url }) {
+    let bookmarks = this.bookmarks;
+
+    if (title) {
+      bookmarks = bookmarks.filter((bookmark) => bookmark.title === title);
+    }
+
+    if (url) {
+      bookmarks = bookmarks.filter((bookmark) => bookmark.url === url);
+    }
+
+    return bookmarks;
   }
 
   // return the bookmark with the given id

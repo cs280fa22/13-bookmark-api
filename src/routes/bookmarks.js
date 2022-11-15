@@ -5,7 +5,8 @@ const router = express.Router();
 export const bookmarkDao = new BookmarkDAO();
 
 router.get("/bookmarks", (req, res) => {
-  const bookmarks = bookmarkDao.readAll();
+  const { title, url } = req.query;
+  const bookmarks = bookmarkDao.readAll({ title, url });
   res.json({
     status: 200,
     message: `Successfully retrieved ${bookmarks.length} bookmarks!`,
