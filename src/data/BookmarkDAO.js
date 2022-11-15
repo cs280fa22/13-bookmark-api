@@ -1,62 +1,48 @@
 import Bookmark from "../model/Bookmark.js";
 
 class BookmarkDAO {
-  constructor() {
-    this.bookmarks = [];
-  }
-
   // return the created bookmark
-  create({ title, url }) {
-    const bookmark = new Bookmark(title, url);
-    this.bookmarks.push(bookmark);
+  async create({ title, url }) {
+    const bookmark = await Bookmark.create({ title, url });
     return bookmark;
   }
 
   // return all bookmarks
-  readAll({ title, url }) {
-    let bookmarks = this.bookmarks;
-
+  async readAll({ title, url }) {
+    const filter = {};
     if (title) {
-      bookmarks = bookmarks.filter((bookmark) => bookmark.title === title);
+      filter.title = title;
     }
 
     if (url) {
-      bookmarks = bookmarks.filter((bookmark) => bookmark.url === url);
+      filter.url = url;
     }
 
+    const bookmarks = await Bookmark.find(filter);
     return bookmarks;
   }
 
   // return the bookmark with the given id
   // return undefined if id does not exist in our database
-  read(id) {
-    return this.bookmarks.find((bookmark) => bookmark.id === id);
+  async read(id) {
+    const bookmark = await Bookmark.findById(id);
+    return bookmark;
   }
 
   // return the updated bookmark
-  update({ id, title, url }) {
-    const bookmark = this.read(id);
-    if (bookmark) {
-      title && (bookmark.title = title);
-      url && (bookmark.url = url);
-    }
+  async update({ id, title, url }) {
+    const bookmark = await Bookmark.findByIdAndUpdate(
+      id,
+      { title, url },
+      { new: true, runValidators: true }
+    );
     return bookmark;
   }
 
   // return the deleted bookmark
-  delete(id) {
-    const index = this.bookmarks.findIndex((bookmark) => bookmark.id === id);
-    if (index === -1) {
-      return undefined;
-    }
-
-    const bookmark = this.bookmarks[index];
-    this.bookmarks.splice(index, 1);
+  async delete(id) {
+    const bookmark = await Bookmark.findByIdAndDelete(id);
     return bookmark;
-  }
-
-  deleteAll() {
-    this.bookmarks = [];
   }
 }
 
