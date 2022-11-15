@@ -59,5 +59,11 @@ describe("Test API /bookmarks endpoints", () => {
     expect(response.body.data.url).toBe("Update url");
   });
 
-  it("Delete a bookmark given its ID", async () => {});
+  it("Delete a bookmark given its ID", async () => {
+    const index = Math.floor(Math.random() * numBookmarks);
+    const bookmark = bookmarkDao.readAll({})[index];
+    const response = await request.delete(`/bookmarks/${bookmark.id}`);
+    expect(response.status).toBe(200);
+    expect(response.body.data).toMatchObject(bookmark);
+  });
 });
