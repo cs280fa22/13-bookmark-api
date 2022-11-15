@@ -1,13 +1,10 @@
-import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
 
-class Bookmark {
-  // pre: title is a non-empty string
-  //      and url is a valid url
-  constructor(title, url) {
-    this.id = uuidv4();
-    this.title = title;
-    this.url = url;
-  }
-}
+const BookmarkSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+});
+
+const Bookmark = mongoose.model("Bookmark", BookmarkSchema);
 
 export default Bookmark;
