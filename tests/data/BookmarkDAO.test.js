@@ -1,94 +1,98 @@
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import BookmarkDAO from "../../src/data/BookmarkDAO";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import BookmarkDAO from "../../src/data/BookmarkDAO.js";
 import { faker } from "@faker-js/faker";
-import Bookmark from "../../src/model/Bookmark";
+import Bookmark from "../../src/model/Bookmark.js";
 import * as db from "../../src/data/db.js";
 import * as dotenv from "dotenv";
+import mongoose from "mongoose";
+import { bookmarkDao } from "../../src/routes/bookmarks.js";
 
 dotenv.config();
+db.connect(process.env.DB_TEST_URI);
+const bookmarkDAO = new BookmarkDAO();
 
 describe("Test BookmarkDAO", () => {
   const numBookmarks = 5;
   let bookmarks;
-  let bookmarkDao;
 
-  beforeAll(() => {
+  beforeEach(async () => {
+    await bookmarkDAO.deleteAll();
     bookmarks = [];
     for (let index = 0; index < numBookmarks; index++) {
-      bookmarks.push(
-        new Bookmark(faker.lorem.sentence(), faker.internet.url())
-      );
+      const bookmark = await Bookmark.create({
+        title: faker.lorem.sentence(),
+        url: faker.internet.url(),
+      });
+      bookmarks.push(bookmark);
     }
   });
 
-  beforeEach(() => {
-    bookmarkDao = new BookmarkDAO();
-  });
-
-  it("test constructor()", () => {
-    expect(bookmarkDao.bookmarks.length).toBe(0);
-  });
-
-  it("test create()", () => {
+  it("test create()", async () => {
     const title = faker.lorem.sentence();
     const url = faker.internet.url();
-    const bookmark = bookmarkDao.create({ title, url });
-    expect(bookmarkDao.bookmarks.length).toBe(1);
-    expect(bookmark.title).toBe(title);
-    expect(bookmark.url).toBe(url);
-    expect(bookmark.id).toBeDefined();
-    expect(bookmarkDao.bookmarks[0]).toMatchObject(bookmark);
+    const _bookmark = await bookmarkDAO.create({ title, url });
+    expect(_bookmark.title).toBe(title);
+    expect(_bookmark.url).toBe(url);
+    expect(_bookmark.id).toBeDefined();
   });
 
-  it("test readAll()", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    expect(bookmarkDao.readAll().length).toBe(bookmarks.length);
+  it("test readAll()", async () => {
+    const _bookmarks = await bookmarkDAO.readAll({});
+    expect(_bookmarks.length).toBe(bookmarks.length);
   });
 
-  it("test read() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    const bookmark = bookmarks[0];
-    expect(bookmarkDao.read(bookmark.id)).toMatchObject(bookmark);
+  it("test read() given valid ID", async () => {
+    const index = Math.floor(Math.random() * numBookmarks);
+    const bookmark = bookmarks[index];
+    const _bookmark = await bookmarkDAO.read(bookmark.id);
+    expect(_bookmark.title).toBe(bookmark.title);
+    expect(_bookmark.url).toBe(bookmark.url);
+    expect(_bookmark.id).toBe(bookmark.id);
   });
 
-  it("test read() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    expect(bookmarkDao.read("invalid_id")).toBeUndefined();
+  it("test read() given invalid ID", async () => {
+    const _bookmark = await bookmarkDAO.read(
+      mongoose.Types.ObjectId().toString()
+    );
+    expect(_bookmark).toBeNull();
   });
 
-  it("test update() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    const bookmark = bookmarks[0];
-    expect(
-      bookmarkDao.update({
-        id: bookmark.id,
-        title: "updated title",
-        url: "update url",
-      })
-    ).toMatchObject({
-      id: bookmark.id,
+  it("test update() given valid ID", async () => {
+    const index = Math.floor(Math.random() * numBookmarks);
+    const bookmark = bookmarks[index];
+    const _bookmark = await bookmarkDao.update({
+      id: bookmark._id,
       title: "updated title",
       url: "update url",
     });
+
+    expect(_bookmark.title).toBe("updated title");
+    expect(_bookmark.url).toBe("update url");
+    expect(_bookmark.id).toBe(bookmark.id);
   });
 
-  it("test update() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    expect(bookmarkDao.update({ id: "invalid_id" })).toBeUndefined();
+  it("test update() given invalid ID", async () => {
+    const _bookmark = await bookmarkDAO.update({
+      id: mongoose.Types.ObjectId().toString(),
+    });
+    expect(_bookmark).toBeNull();
   });
 
-  it("test delete() given valid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    const toDelete = bookmarks[0];
-    const bookmark = bookmarkDao.delete(toDelete.id);
-    expect(toDelete).toMatchObject(bookmark);
-    expect(bookmarkDao.bookmarks.length).toBe(numBookmarks - 1);
+  it("test delete() given valid ID", async () => {
+    const index = Math.floor(Math.random() * numBookmarks);
+    const bookmark = bookmarks[index];
+    const _bookmark = await bookmarkDao.delete(bookmark._id);
+    expect(_bookmark.title).toBe(bookmark.title);
+    expect(_bookmark.url).toBe(bookmark.url);
+    expect(_bookmark.id).toBe(bookmark.id);
   });
 
-  it("test delete() given invalid ID", () => {
-    bookmarkDao.bookmarks = bookmarks.map(b => b);
-    const bookmark = bookmarkDao.delete("invalid_id");
-    expect(bookmark).toBeUndefined();
-    expect(bookmarkDao.bookmarks.length).toBe(numBookmarks);
+  it("test delete() given invalid ID", async () => {
+    const _bookmark = await bookmarkDAO.delete(mongoose.Types.ObjectId());
+    expect(_bookmark).toBeNull();
+  });
+
+  afterAll(async () => {
+    await bookmarkDao.deleteAll();
   });
 });

@@ -44,6 +44,10 @@ class BookmarkDAO {
     const bookmark = await Bookmark.findByIdAndDelete(id);
     return bookmark;
   }
+
+  async deleteAll() {
+    await Bookmark.deleteMany({});
+  }
 }
 
 export default BookmarkDAO;

@@ -14,4 +14,5 @@ test("test constructor", async () => {
   expect(bookmark.title).toBe(title);
   expect(bookmark.url).toBe(url);
   expect(bookmark.id).toBeDefined();
+  await Bookmark.deleteMany({});
 });
