@@ -128,6 +128,14 @@ describe("Test BookmarkDAO", () => {
   });
 
   it("test read() given invalid ID", async () => {
+    try {
+      await bookmarkDAO.read("invalid");
+    } catch (err) {
+      expect(err.status).toBe(400);
+    }
+  });
+
+  it("test read() given valid but non-existing ID", async () => {
     const _bookmark = await bookmarkDAO.read(
       mongoose.Types.ObjectId().toString()
     );
@@ -137,18 +145,28 @@ describe("Test BookmarkDAO", () => {
   it("test update() given valid ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
     const bookmark = bookmarks[index];
+    const title = faker.lorem.sentence();
+    const url = faker.internet.url();
     const _bookmark = await bookmarkDao.update({
-      id: bookmark._id,
-      title: "updated title",
-      url: "update url",
+      id: bookmark.id,
+      title,
+      url,
     });
 
-    expect(_bookmark.title).toBe("updated title");
-    expect(_bookmark.url).toBe("update url");
+    expect(_bookmark.title).toBe(title);
+    expect(_bookmark.url).toBe(url);
     expect(_bookmark.id).toBe(bookmark.id);
   });
 
   it("test update() given invalid ID", async () => {
+    try {
+      await bookmarkDAO.update("invalid");
+    } catch (err) {
+      expect(err.status).toBe(400);
+    }
+  });
+
+  it("test update() given valid but non-existing ID", async () => {
     const _bookmark = await bookmarkDAO.update({
       id: mongoose.Types.ObjectId().toString(),
     });
@@ -158,14 +176,24 @@ describe("Test BookmarkDAO", () => {
   it("test delete() given valid ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
     const bookmark = bookmarks[index];
-    const _bookmark = await bookmarkDao.delete(bookmark._id);
+    const _bookmark = await bookmarkDao.delete(bookmark.id);
     expect(_bookmark.title).toBe(bookmark.title);
     expect(_bookmark.url).toBe(bookmark.url);
     expect(_bookmark.id).toBe(bookmark.id);
   });
 
   it("test delete() given invalid ID", async () => {
-    const _bookmark = await bookmarkDAO.delete(mongoose.Types.ObjectId());
+    try {
+      await bookmarkDAO.delete("invalid");
+    } catch (err) {
+      expect(err.status).toBe(400);
+    }
+  });
+
+  it("test delete() given valid but non-existing ID", async () => {
+    const _bookmark = await bookmarkDAO.delete(
+      mongoose.Types.ObjectId().toString()
+    );
     expect(_bookmark).toBeNull();
   });
 

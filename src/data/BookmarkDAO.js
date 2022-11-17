@@ -1,14 +1,20 @@
 import Bookmark from "../model/Bookmark.js";
 import ApiError from "../model/ApiError.js";
+import { z } from "zod";
+import mongoose from "mongoose";
+
+const validObjectId = z.string().refine((id) => mongoose.isValidObjectId(id), {
+  message: "Invalid ID!",
+});
 
 class BookmarkDAO {
   // return the created bookmark
   // throws ApiError when title or url are invalid
   async create({ title, url }) {
     try {
-      const bookmark = await Bookmark.create({title, url});
+      const bookmark = await Bookmark.create({ title, url });
       return bookmark;
-    } catch(err) {
+    } catch (err) {
       throw new ApiError(400, err.message);
     }
   }
@@ -29,26 +35,42 @@ class BookmarkDAO {
   }
 
   // return the bookmark with the given id
-  // return undefined if id does not exist in our database
+  // return null if resource does not exist in our database
+  // throws ApiError if id is invalid
   async read(id) {
-    const bookmark = await Bookmark.findById(id);
-    return bookmark;
+    try {
+      validObjectId.parse(id);
+      const bookmark = await Bookmark.findById(id);
+      return bookmark;
+    } catch (err) {
+      throw new ApiError(400, err.message);
+    }
   }
 
   // return the updated bookmark
   async update({ id, title, url }) {
-    const bookmark = await Bookmark.findByIdAndUpdate(
-      id,
-      { title, url },
-      { new: true, runValidators: true }
-    );
-    return bookmark;
+    try {
+      validObjectId.parse(id);
+      const bookmark = await Bookmark.findByIdAndUpdate(
+        id,
+        { title, url },
+        { new: true, runValidators: true }
+      );
+      return bookmark;
+    } catch (err) {
+      throw new ApiError(400, err.message);
+    }
   }
 
   // return the deleted bookmark
   async delete(id) {
-    const bookmark = await Bookmark.findByIdAndDelete(id);
-    return bookmark;
+    try {
+      validObjectId.parse(id);
+      const bookmark = await Bookmark.findByIdAndDelete(id);
+      return bookmark;
+    } catch (err) {
+      throw new ApiError(400, err.message);
+    }
   }
 
   async deleteAll() {
