@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import BookmarkDAO from "../../src/data/BookmarkDAO.js";
 import { faker } from "@faker-js/faker";
 import Bookmark from "../../src/model/Bookmark.js";
@@ -8,12 +8,17 @@ import mongoose from "mongoose";
 import { bookmarkDao } from "../../src/routes/bookmarks.js";
 
 dotenv.config();
-db.connect(process.env.DB_TEST_URI);
+
 const bookmarkDAO = new BookmarkDAO();
 
 describe("Test BookmarkDAO", () => {
   const numBookmarks = 5;
   let bookmarks;
+
+  beforeAll(async () => {
+    db.connect(process.env.DB_TEST_URI);
+    await bookmarkDao.deleteAll();
+  });
 
   beforeEach(async () => {
     await bookmarkDAO.deleteAll();

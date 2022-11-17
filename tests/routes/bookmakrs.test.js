@@ -1,27 +1,36 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, beforeAll } from "vitest";
 import app from "../../src/index.js";
 import supertest from "supertest";
 import { faker } from "@faker-js/faker";
 import { bookmarkDao } from "../../src/routes/bookmarks.js";
+import * as db from "../../src/data/db.js";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const request = new supertest(app);
 
 describe("Test API /bookmarks endpoints", () => {
   const numBookmarks = 5;
 
-  beforeEach(() => {
-    bookmarkDao.deleteAll();
+  beforeAll(async () => {
+    db.connect(process.env.DB_TEST_URI);
+    await bookmarkDao.deleteAll();
+  });
+
+  beforeEach(async () => {
+    await bookmarkDao.deleteAll();
 
     const cutoff = 2;
     for (let index = 0; index < cutoff; index++) {
-      bookmarkDao.create({
+      await bookmarkDao.create({
         title: "Fake title",
         url: `url-${index}`,
       });
     }
 
     for (let index = cutoff; index < numBookmarks; index++) {
-      bookmarkDao.create({
+      await bookmarkDao.create({
         title: faker.lorem.sentence(),
         url: faker.internet.url(),
       });
@@ -58,37 +67,48 @@ describe("Test API /bookmarks endpoints", () => {
       url,
     });
     expect(response.status).toBe(201);
-    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data._id).toBeDefined();
     expect(response.body.data.title).toBe(title);
     expect(response.body.data.url).toBe(url);
   });
 
   it("GET a bookmark given its ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
-    const bookmark = bookmarkDao.readAll({})[index];
+    const bookmarks = await bookmarkDao.readAll({});
+    const bookmark = bookmarks[index];
     const response = await request.get(`/bookmarks/${bookmark.id}`);
     expect(response.status).toBe(200);
-    expect(response.body.data).toMatchObject(bookmark);
+    expect(response.body.data._id).toBe(bookmark.id);
+    expect(response.body.data.title).toBe(bookmark.title);
+    expect(response.body.data.url).toBe(bookmark.url);
   });
 
   it("Update a bookmark given its ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
-    const bookmark = bookmarkDao.readAll({})[index];
+    const bookmarks = await bookmarkDao.readAll({});
+    const bookmark = bookmarks[index];
     const response = await request.put(`/bookmarks/${bookmark.id}`).send({
       title: "Update title",
       url: "Update url",
     });
     expect(response.status).toBe(200);
-    expect(response.body.data.id).toBe(bookmark.id);
+    expect(response.body.data._id).toBe(bookmark.id);
     expect(response.body.data.title).toBe("Update title");
     expect(response.body.data.url).toBe("Update url");
   });
 
   it("Delete a bookmark given its ID", async () => {
     const index = Math.floor(Math.random() * numBookmarks);
-    const bookmark = bookmarkDao.readAll({})[index];
+    const bookmarks = await bookmarkDao.readAll({});
+    const bookmark = bookmarks[index];
     const response = await request.delete(`/bookmarks/${bookmark.id}`);
     expect(response.status).toBe(200);
-    expect(response.body.data).toMatchObject(bookmark);
+    expect(response.body.data._id).toBe(bookmark.id);
+    expect(response.body.data.title).toBe(bookmark.title);
+    expect(response.body.data.url).toBe(bookmark.url);
+  });
+
+  afterAll(async () => {
+    await bookmarkDao.deleteAll();
   });
 });
