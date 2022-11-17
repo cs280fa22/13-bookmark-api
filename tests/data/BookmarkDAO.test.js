@@ -41,6 +41,78 @@ describe("Test BookmarkDAO", () => {
     expect(_bookmark.id).toBeDefined();
   });
 
+  describe("test create() throws error", () => {
+    it("empty title", async () => {
+      try {
+        const title = "";
+        const url = faker.internet.url();
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("null title", async () => {
+      try {
+        const title = null;
+        const url = faker.internet.url();
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("undefined title", async () => {
+      try {
+        const title = undefined;
+        const url = faker.internet.url();
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("empty url", async () => {
+      try {
+        const title = faker.lorem.sentence();
+        const url = "";
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("null url", async () => {
+      try {
+        const title = faker.lorem.sentence();
+        const url = null;
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("undefined url", async () => {
+      try {
+        const title = faker.lorem.sentence();
+        const url = undefined;
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+
+    it("invalid url", async () => {
+      try {
+        const title = faker.lorem.sentence();
+        const url = faker.lorem.sentence();
+        await bookmarkDAO.create({ title, url });
+      } catch (err) {
+        expect(err.status).toBe(400);
+      }
+    });
+  });
+
   it("test readAll()", async () => {
     const _bookmarks = await bookmarkDAO.readAll({});
     expect(_bookmarks.length).toBe(bookmarks.length);

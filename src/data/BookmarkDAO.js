@@ -1,10 +1,16 @@
 import Bookmark from "../model/Bookmark.js";
+import ApiError from "../model/ApiError.js";
 
 class BookmarkDAO {
   // return the created bookmark
+  // throws ApiError when title or url are invalid
   async create({ title, url }) {
-    const bookmark = await Bookmark.create({ title, url });
-    return bookmark;
+    try {
+      const bookmark = await Bookmark.create({title, url});
+      return bookmark;
+    } catch(err) {
+      throw new ApiError(400, err.message);
+    }
   }
 
   // return all bookmarks
