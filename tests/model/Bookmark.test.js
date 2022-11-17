@@ -83,6 +83,16 @@ describe("Test Bookmark Schema & Model", () => {
         expect(err).toBeDefined();
       }
     });
+
+    it("test url is invalid", async () => {
+      try {
+        const title = faker.lorem.sentence();
+        const url = faker.lorem.sentence();
+        await Bookmark.create({ title, url });
+      } catch (err) {
+        expect(err).toBeDefined();
+      }
+    });
   });
 
   afterAll(async () => {
