@@ -48,6 +48,8 @@ class BookmarkDAO {
   }
 
   // return the updated bookmark
+  // return null if resource does not exist in our database
+  // throws ApiError if id is invalid
   async update({ id, title, url }) {
     try {
       validObjectId.parse(id);
@@ -63,6 +65,8 @@ class BookmarkDAO {
   }
 
   // return the deleted bookmark
+  // return null if resource does not exist in our database
+  // throws ApiError if id is invalid
   async delete(id) {
     try {
       validObjectId.parse(id);
