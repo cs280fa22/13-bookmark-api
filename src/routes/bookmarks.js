@@ -5,7 +5,7 @@ import ApiError from "../model/ApiError.js";
 const router = express.Router();
 export const bookmarkDao = new BookmarkDAO();
 
-router.get("/bookmarks", async (req, res) => {
+router.get("/bookmarks", async (req, res, next) => {
   try {
     const { title, url } = req.query;
     const bookmarks = await bookmarkDao.readAll({ title, url });
@@ -15,15 +15,11 @@ router.get("/bookmarks", async (req, res) => {
       data: bookmarks,
     });
   } catch (err) {
-    const code = err.status || 500;
-    res.status(code).json({
-      status: code,
-      message: err.message || `Internal Server Error!`,
-    });
+    next(err);
   }
 });
 
-router.get("/bookmarks/:id", async (req, res) => {
+router.get("/bookmarks/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const bookmark = await bookmarkDao.read(id);
@@ -38,15 +34,11 @@ router.get("/bookmarks/:id", async (req, res) => {
       data: bookmark,
     });
   } catch (err) {
-    const code = err.status || 500;
-    res.status(code).json({
-      status: code,
-      message: err.message || `Internal Server Error!`,
-    });
+    next(err);
   }
 });
 
-router.post("/bookmarks", async (req, res) => {
+router.post("/bookmarks", async (req, res, next) => {
   try {
     const { title, url } = req.body;
     const bookmark = await bookmarkDao.create({ title, url });
@@ -56,15 +48,11 @@ router.post("/bookmarks", async (req, res) => {
       data: bookmark,
     });
   } catch (err) {
-    const code = err.status || 500;
-    res.status(code).json({
-      status: code,
-      message: err.message || `Internal Server Error!`,
-    });
+    next(err);
   }
 });
 
-router.put("/bookmarks/:id", async (req, res) => {
+router.put("/bookmarks/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, url } = req.body;
@@ -80,15 +68,11 @@ router.put("/bookmarks/:id", async (req, res) => {
       data: bookmark,
     });
   } catch (err) {
-    const code = err.status || 500;
-    res.status(code).json({
-      status: code,
-      message: err.message || `Internal Server Error!`,
-    });
+    next(err);
   }
 });
 
-router.delete("/bookmarks/:id", async (req, res) => {
+router.delete("/bookmarks/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const bookmark = await bookmarkDao.delete(id);
@@ -103,11 +87,7 @@ router.delete("/bookmarks/:id", async (req, res) => {
       data: bookmark,
     });
   } catch (err) {
-    const code = err.status || 500;
-    res.status(code).json({
-      status: code,
-      message: err.message || `Internal Server Error!`,
-    });
+    next(err);
   }
 });
 
