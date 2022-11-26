@@ -1,10 +1,12 @@
 import express from "express";
 import bookmarks from "./routes/bookmarks.js";
 import cors from "cors";
+import helmet from "helmet";
 
 const app = express();
 
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 app.get("/", (req, res) => {
